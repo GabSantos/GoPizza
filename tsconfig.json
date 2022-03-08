@@ -3,11 +3,22 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": "./",
-    "paths": {
-      "@src/*": ["src/*"],
-      "@src/components/*": ["src/components/*"],
-      "@src/screens/*": ["src/screens/*"],
-      "@src/assets/*": ["src/assets/*"],
-    }
+    // "paths": {
+    //   "@src/*": [
+    //     "./src/*"
+    //   ],
+    //   "@components/*": [
+    //     "./src/components/*"
+    //   ],
+    //   "@screens/*": [
+    //     "./src/screens/*"
+    //   ],
+    //   "@assets/*": [
+    //     "./src/assets/*"
+    //   ],
+    //   "@hooks/*": [
+    //     "./src/hooks/*"
+    //   ],
+    // }
   },
 }

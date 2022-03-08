@@ -4,18 +4,19 @@ module.exports = function(api) {
     presets: ['babel-preset-expo'],
     plugins:[
       'react-native-reanimated/plugin',
-      [
-        'module-resolver',
-        {
-          root: ['./src'],
-          extensions: ['.js', '.tsx', '.json', '.ts'],
-          alias: {
-            '@components': './src/components',
-            '@screens': './src/screens',
-            '@assets': './src/assets',
-          }
-        }
-      ]
+      // [
+      //   'module-resolver',
+      //   {
+      //     root: ['./src'],
+      //     extensions: ['.js', '.tsx', '.json', '.ts'],
+      //     alias: {
+      //       '@components': './src/components',
+      //       '@screens': './src/screens',
+      //       '@assets': './src/assets',
+      //       '@hooks': './src/hooks',
+      //     }
+      //   }
+      // ]
     ]
   };
 };

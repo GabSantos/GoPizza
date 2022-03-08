@@ -6,8 +6,11 @@ import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import expo.modules.ReactActivityDelegateWrapper;
+import expo.modules.splashscreen.singletons.SplashScreen;
+import expo.modules.splashscreen.SplashScreenImageResizeMode;
 
 public class MainActivity extends ReactActivity {
   @Override
@@ -16,6 +19,7 @@ public class MainActivity extends ReactActivity {
     // coloring the background, status bar, and navigation bar.
     // This is required for expo-splash-screen.
     setTheme(R.style.AppTheme);
+    SplashScreen.show(this, SplashScreenImageResizeMode.CONTAIN, ReactRootView.class, false);
     super.onCreate(null);
   }
 
@@ -28,12 +32,12 @@ public class MainActivity extends ReactActivity {
     return "main";
   }
 
-  @Override
-  protected ReactActivityDelegate createReactActivityDelegate() {
-    return new ReactActivityDelegateWrapper(this,
-      new ReactActivityDelegate(this, getMainComponentName())
-    );
-  }
+  // @Override
+  // protected ReactActivityDelegate createReactActivityDelegate() {
+  //   return new ReactActivityDelegateWrapper(this,
+  //     new ReactActivityDelegate(this, getMainComponentName())
+  //   );
+  // }
 
   /**
    * Align the back button behavior with Android S
@@ -53,5 +57,15 @@ public class MainActivity extends ReactActivity {
     // Use the default back button implementation on Android S
     // because it's doing more than {@link Activity#moveTaskToBack} in fact.
     super.invokeDefaultOnBackPressed();
+  }
+
+  @Override
+  protected ReactActivityDelegate createReactActivityDelegate() {
+    return new ReactActivityDelegate(this, getMainComponentName ()) {
+    @Override
+    protected ReactRootView createRootView() {
+    return new RNGestureHandlerEnabledRootView (MainActivity. this);
+      }
+    };
   }
 }

@@ -5,12 +5,13 @@ import { useTheme } from "styled-components/native";
 import firestore from '@react-native-firebase/firestore';
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
+import { useAuth } from "../../hooks/auth";
 import happyEmoji from '../../assets/happy.png';
 import { Search } from "../../components/Search";
 import { ProductCard, ProductProps } from "../../components/ProductCard";
 
 
-import { 
+import {
   Container,
   Header,
   Greeting,
@@ -22,32 +23,33 @@ import {
   NewProductButton
 } from "./styles";
 
-export function Home(){
+export function Home() {
   const { COLORS } = useTheme();
   const [search, setSearch] = useState('');
-  const [pizzas, setPizzas] = useState<ProductProps[]>([]);	
+  const [pizzas, setPizzas] = useState<ProductProps[]>([]);
   const navigation = useNavigation();
+  const { signOut, user } = useAuth();
 
-  function fetchPizzas(value: string){
+  function fetchPizzas(value: string) {
     const formattetValue = value.toLowerCase().trim();
 
     firestore()
-    .collection('pizzas')
-    .orderBy('name_insensitive')
-    .startAt(formattetValue)
-    .endAt(`${formattetValue}\uf8ff`)
-    .get()
-    .then(response => {
-      const data = response.docs.map(doc => {
-        return {
-          id: doc.id,
-          ...doc.data()
-        }
-      }) as ProductProps[];
+      .collection('pizzas')
+      .orderBy('name_insensitive')
+      .startAt(formattetValue)
+      .endAt(`${formattetValue}\uf8ff`)
+      .get()
+      .then(response => {
+        const data = response.docs.map(doc => {
+          return {
+            id: doc.id,
+            ...doc.data()
+          }
+        }) as ProductProps[];
 
-      setPizzas(data);
-    })
-    .catch(error => Alert.alert('Ops...', 'Não foi possível carregar as pizzas'));
+        setPizzas(data);
+      })
+      .catch(error => Alert.alert('Ops...', 'Não foi possível carregar as pizzas'));
   }
 
   const handleSearch = () => {
@@ -60,9 +62,10 @@ export function Home(){
   }
 
   const handleOpen = (id: string) => {
-    navigation.navigate('product', { id });
+    const route = user?.isAdmin ? 'product' : 'order';
+    navigation.navigate(route, { id });
   }
-  
+
   const handleAdd = () => {
     navigation.navigate('product', {});
   }
@@ -70,7 +73,7 @@ export function Home(){
   useFocusEffect(
     useCallback(() => {
       fetchPizzas('');
-    },[])
+    }, [])
   );
 
   return (
@@ -79,16 +82,16 @@ export function Home(){
       <Header>
         <Greeting>
           <GreetingEmoji source={happyEmoji} />
-          <GreetingText>Olá, Admin</GreetingText>
+          <GreetingText>Olá, {user?.name}</GreetingText>
         </Greeting>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={signOut}>
           <MaterialIcons name="logout" size={24} color={COLORS.TITLE} />
         </TouchableOpacity>
       </Header>
 
       <Search onChangeText={setSearch} value={search} onSearch={handleSearch} onClear={handleClear} />
-      
+
       <MenuHeader>
         <Title>Cardápio</Title>
         <MenuItemsNumber>{pizzas.length} pizzas</MenuItemsNumber>
@@ -98,19 +101,22 @@ export function Home(){
         data={pizzas}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <ProductCard 
-            data={item} 
+          <ProductCard
+            data={item}
             onPress={() => handleOpen(item.id)}
           />
         )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 20, paddingBottom: 125, marginHorizontal: 24 }}
       />
-      <NewProductButton 
-        title="Cadastrar pizza"
-        type="secondary"
-        onPress={handleAdd}
-      />
+      {
+        user?.isAdmin && 
+        <NewProductButton
+          title="Cadastrar pizza"
+          type="secondary"
+          onPress={handleAdd}
+        />
+      }
     </Container>
   );
 }
